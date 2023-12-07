@@ -12,6 +12,13 @@ public class Day3Tests
         Assert.That(p1, Is.EqualTo(expected));
     }
 
+    [TestCaseSource(nameof(PartTwoTestCases))]
+    public void PartTwoTests(IEnumerable<string> input, int expected)
+    {
+        var p2 = Day3Impl.P2(input.ToList());
+        Assert.That(p2, Is.EqualTo(expected));
+    }
+
     private static IEnumerable<TestCaseData> PartOneTestCases
     {
         get
@@ -171,6 +178,86 @@ public class Day3Tests
                 "......180",
                 "........."
             }, 180);
+        }
+    }
+
+    private static IEnumerable<TestCaseData> PartTwoTestCases
+    {
+        get
+        {
+            yield return new TestCaseData(new List<string>
+            {
+                "..123*...",
+                "......180",
+                "........."
+            }, 22140);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..123*...",
+                "...543...",
+                "........."
+            }, 66789);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..321*...",
+                "...543...",
+                "..678...."
+            }, 174303);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "....3*...",
+                "...543...",
+                "..678....",
+                "........."
+            }, 1629);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..100*...",
+                "......500",
+                "..678....",
+            }, 50000);
+
+
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..123....",
+                ".....*180",
+                "........."
+            }, 22140);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..123....",
+                "..*543...",
+                "........."
+            }, 66789);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..321....",
+                "..*543...",
+                "..678...."
+            }, 0);
+
+            yield return new TestCaseData(new List<string>
+            {
+                ".....3...",
+                "...543*..",
+                "..678....",
+                "........."
+            }, 1629);
+
+            yield return new TestCaseData(new List<string>
+            {
+                "..100...",
+                ".....*500",
+                "..678....",
+            }, 0);
         }
     }
 }
