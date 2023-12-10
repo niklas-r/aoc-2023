@@ -1,4 +1,5 @@
-﻿open System.IO
+﻿open System.Collections.Generic
+open System.IO
 
 type Card =
     { Number: int
@@ -43,11 +44,14 @@ let buildTrees (cards: Card list) =
             []
         else
             let card = cards.[cardIndex]
-
-            let matches = Set.intersect (Set.ofList card.WinningNumbers) (Set.ofList card.MyNumbers) |> Set.toList
-            let wonCards =
-                List.fold (fun acc i -> acc @ buildTree (cardIndex + i)) [] [1 .. List.length matches]
-            [Node(card, wonCards)]
+            let winningNumbersSet = HashSet<_>(card.WinningNumbers)
+            let matches = card.MyNumbers |> List.filter winningNumbersSet.Contains
+            let matchCount = matches.Length
+            if matchCount = 0 then
+                [Leaf card]
+            else
+                let wonCards = List.collect (fun i -> buildTree (cardIndex + i)) [1 .. matchCount]
+                [Node(card, wonCards)]
 
     List.collect buildTree [0 .. cards.Length - 1]
 
