@@ -32,35 +32,66 @@ let runMappings (seed: int64) (mappings: (int64 * int64 * int64) list list) =
         | [] -> source
         | head :: tail ->
             let d, s, l = head
+
             if source < s || source > (s + l - (int64 1)) then
                 inner source tail
             else
                 d + l - ((s + l) - source)
 
     let mutable result = seed
+
     for mapping in mappings do
         result <- inner result mapping
+
     result
 
-    // List.map (inner seed) mappings |> List.last
+let groupComplete (group: string list) =
+    match group with
+    | [] -> false // empty
+    | [ _ ] -> false // one item
+    | head :: tail -> // N items
+        let last = tail |> List.last
+        head.Contains(":") && String.IsNullOrEmpty last
 
 let p1 (input: string seq) =
     let seeds = input |> Seq.head |> mapSeeds
-
-    let groupComplete (group: string list) =
-        match group with
-        | [] -> false // empty
-        | [ _ ] -> false // one item
-        | head :: tail -> // N items
-            let last = tail |> List.last
-            head.Contains(":") && String.IsNullOrEmpty last
 
     let mappings =
         partitionOn groupComplete (input |> Seq.skip 2 |> Seq.toList)
         |> List.map parseMapping
 
-    let results =
-        seeds
-        |> Array.map (fun seed -> runMappings seed mappings)
+    let results = seeds |> Array.map (fun seed -> runMappings seed mappings)
 
     results |> Array.min
+
+let p2 (input: string seq) =
+    let seedRanges =
+        input
+        |> Seq.head
+        |> mapSeeds
+        |> Array.chunkBySize 2
+        |> Array.map (fun x -> x.[0], x.[1])
+
+    let mappings =
+        partitionOn groupComplete (input |> Seq.skip 2 |> Seq.toList)
+        |> List.map parseMapping
+
+    let mutable minResult = Int64.MaxValue
+
+    for index, seedRange in seedRanges |> Array.indexed do
+        let a, b = seedRange
+        let mutable i = a
+        printfn "Starting range %d (%d to %d)" index a (a + b)
+
+        // This takes a very long time to run
+        while i < a + b do
+            let result = runMappings i mappings
+
+            if result < minResult then
+                minResult <- result
+
+            i <- i + (int64 1)
+
+        printfn "Finished range %d" index
+
+    minResult
