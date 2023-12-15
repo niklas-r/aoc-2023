@@ -1,5 +1,11 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=202C0094_002D606E_002D441B_002D865F_002D1B1C8FA58669_002Ff_003ADay3Tests_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a4791ccc_002D2f5b_002D4837_002D9cb1_002Dbcb3797fecc8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from &amp;lt;UnitTests&amp;gt;" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
-  &lt;Project Location="/Users/niklas/Code/aoc-2023/AoC2023/UnitTests" Presentation="&amp;lt;UnitTests&amp;gt;" /&gt;
+  &lt;Or&gt;
+    &lt;Project Location="/Users/niklas/Code/aoc-2023/AoC2023/UnitTests" Presentation="&amp;lt;UnitTests&amp;gt;" /&gt;
+    &lt;TestAncestor&gt;
+      &lt;TestId&gt;NUnit3x::CE41E638-5369-424D-8291-43725D8C5F78::net8.0::Day7.FSharpTests.ShouldCompareHands&lt;/TestId&gt;
+      &lt;TestId&gt;NUnit3x::CE41E638-5369-424D-8291-43725D8C5F78::net8.0::Day7.Tests&lt;/TestId&gt;
+    &lt;/TestAncestor&gt;
+  &lt;/Or&gt;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
