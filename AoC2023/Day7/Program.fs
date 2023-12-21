@@ -12,3 +12,6 @@ let run part runner input expected =
 
 run "example 1" Day7Impl.p1 example 6440
 run "part 1" Day7Impl.p1 input 250232501
+
+run "example 2" Day7Impl.p2 example 5905
+run "part 2" Day7Impl.p2 input 249138943

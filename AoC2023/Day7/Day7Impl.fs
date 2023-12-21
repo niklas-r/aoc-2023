@@ -1,6 +1,7 @@
 module Day7Impl
 
 type CardRank =
+    | Joker = 1
     | Two = 2
     | Three = 3
     | Four = 4
@@ -32,6 +33,9 @@ let createRank rank =
     | 'A' -> CardRank.Ace
     | _ -> failwith "Invalid card rank"
 
+let createRankWithJoker rank =
+    if rank = 'J' then CardRank.Joker else createRank rank
+
 type HandType =
     | HighCard of CardRank
     | OnePair
@@ -51,19 +55,38 @@ let getHandType (cards: Card array) =
         |> Array.sortByDescending fst
         |> Array.sortByDescending snd
 
+    // Here be dragons
     match rankCounts with
     | [| (_, 5) |] -> FiveCard
-    | [| (_, 4); (_, 1) |] -> FourCard
-    | [| (_, 3); (_, 2) |] -> FullHouse
-    | [| (_, 3); (_, 1); (_, 1) |] -> ThreeCard
-    | [| (_, 2); (_, 2); _ |] -> TwoPair
-    | [| (_, 2); (_, 1); (_, 1); (_, 1) |] -> OnePair
+    | [| (_, 4); (CardRank.Joker, 1) |]
+    | [| (CardRank.Joker, 4); (_, 1) |]
+    | [| (_, 3); (CardRank.Joker, 2) |]
+    | [| (CardRank.Joker, 3); (_, 2) |] -> FiveCard
+    | [| (_, 4); (x, 1) |] when x <> CardRank.Joker -> FourCard
+    | [| (_, 3); (_, 1); (CardRank.Joker, 1) |]
+    | [| (CardRank.Joker, 3); (_, 1); (_, 1) |]
+    | [| (_, 2); (CardRank.Joker, 2); (_, 1) |] -> FourCard
+    | [| (x, 3); (y, 2) |] when x <> CardRank.Joker && y <> CardRank.Joker -> FullHouse
+    | [| (_, 2); (_, 2); (CardRank.Joker, 1) |] -> FullHouse
+    | [| (x, 3); (_, 1); (_, 1) |] when x <> CardRank.Joker -> ThreeCard
+    | [| (CardRank.Joker, 2); (_, 1); (_, 1); (_, 1) |] -> ThreeCard
+    | [| (_, 2); (_, 1); (_, 1); (CardRank.Joker, 1) |] -> ThreeCard
+    | [| (x, 2); (y, 2); (_, 1) |] when x <> CardRank.Joker && y <> CardRank.Joker -> TwoPair
+    | [| (x, 2); (_, 1); (_, 1); (_, 1) |] when x <> CardRank.Joker -> OnePair
+    | [| (_, 1); (_, 1); (_, 1); (_, 1); (CardRank.Joker, 1) |] -> OnePair
     | _ -> cards |> Array.maxBy (_.Rank) |> (fun x -> HighCard x.Rank)
 
-type Hand(cards: string, bid: int) =
+type Hand(cards: string, bid: int, hasJoker: bool) =
     let cards' =
         match cards.Length with
-        | 5 -> cards |> Array.ofSeq |> Array.map (fun x -> { Rank = createRank x })
+        | 5 ->
+            cards
+            |> Array.ofSeq
+            |> Array.map (fun x ->
+                if not hasJoker then
+                    { Rank = createRank x }
+                else
+                    { Rank = createRankWithJoker x })
         | _ -> failwith "Invalid number of cards"
 
     let handType = getHandType cards'
@@ -112,7 +135,24 @@ let p1 (input: string seq) =
         input
         |> Seq.map (fun x ->
             let split = x.Split(" ")
-            Hand(split[0], int split[1]))
+            Hand(split[0], int split[1], false))
+        |> Seq.toArray
+
+    let sortedHands = hands |> sortHands
+
+    let result =
+        sortedHands
+        |> Array.indexed
+        |> Array.sumBy (fun (i, hand) -> int64 (hand.Bid * (i + 1)))
+
+    result
+
+let p2 (input: string seq) =
+    let hands =
+        input
+        |> Seq.map (fun x ->
+            let split = x.Split(" ")
+            Hand(split[0], int split[1], true))
         |> Seq.toArray
 
     let sortedHands = hands |> sortHands
